@@ -20,5 +20,5 @@ jobs:
 
       - name: Build and Push
         run: |
-          docker build -t yourdockerhub/devops-project:${{ github.sha }} .
-          docker push yourdockerhub/devops-project:${{ github.sha }}
+          docker build -t vsreevidya/devops-project:${{ github.sha }} .
+          docker push vsreevidya/devops-project:${{ github.sha }}
