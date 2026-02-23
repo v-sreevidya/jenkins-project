@@ -20,5 +20,18 @@ jobs:
 
       - name: Build and Push
         run: |
-          docker build -t vsreevidya/devops-project:${{ github.sha }} .
-          docker push vsreevidya/devops-project:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/devops-project:${{ github.sha }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/devops-project:${{ github.sha }}
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/devops-project:${{ github.sha }}
+            docker stop app || true
+            docker rm app || true
+            docker run -d --name app -p 3000:3000 \
+              ${{ secrets.DOCKER_USERNAME }}/devops-project:${{ github.sha }}
